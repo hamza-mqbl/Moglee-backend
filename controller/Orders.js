@@ -2,19 +2,22 @@ const express = require("express");
 const router = express.Router();
 const db = require("../DB/DB");
 
+// Get dispatch backlog
 router.get("/get-dispatch-backlog", async (req, res) => {
+  console.log("req is comming")
   try {
-    const [results] = await pool.query("SELECT * FROM dispatchBacklog");
+    const [results] = await db.query("SELECT * FROM dispatchBacklog");
     res.json(results);
   } catch (err) {
     console.error("Error executing query:", err);
     res.status(500).json({ error: err.message });
   }
 });
-// /api/orders/test-db-connection
+
+// Test database connection
 router.get("/test-db-connection", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT 1 + 1 AS result");
+    const [rows] = await db.query("SELECT 1 + 1 AS result");
     res.json({ message: "Database connection successful", result: rows[0].result });
   } catch (err) {
     console.error("Error testing database connection:", err);

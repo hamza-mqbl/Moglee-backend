@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise'); // Use mysql2/promise
 
 // Create a connection pool
 const pool = mysql.createPool({
@@ -44,16 +44,14 @@ pool.on('error', (err) => {
 });
 
 // Test the pool connection
-pool.getConnection((err, connection) => {
-  if (err) {
+pool.getConnection()
+  .then((connection) => {
+    console.log('Successfully acquired connection from pool');
+    connection.release();
+  })
+  .catch((err) => {
     console.error('Error getting connection from pool:', err);
-    return;
-  }
-  console.log('Successfully acquired connection from pool');
-
-  // Release the connection back to the pool
-  connection.release();
-});
+  });
 
 // Export the pool
 module.exports = pool;
