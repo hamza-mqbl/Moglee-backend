@@ -9,7 +9,7 @@ const pool = mysql.createPool({
   database: 'moglee_v2',
   charset: 'utf8mb4',
   waitForConnections: true,
-  connectionLimit: 10, // Adjust based on your needs
+  connectionLimit: 2, // Adjust based on your needs
   queueLimit: 0
 });
 
