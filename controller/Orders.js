@@ -9,9 +9,9 @@ router.get("/get-dispatch-backlog", async (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     res.json(results);
-    // console.log(results)
   });
 });
+
 router.get("/get-backlog_reasons", async (req, res) => {
   console.log("request is coming", req.body);
   db.query("SELECT * FROM backlog_reasons", (err, results) => {
@@ -21,13 +21,12 @@ router.get("/get-backlog_reasons", async (req, res) => {
     res.json(results);
   });
 });
-// **Update Backlog Reason API**
-// **Update Backlog Reason API**
+
 router.put("/update-backlog-reason", async (req, res) => {
-  const { order_id, backlog_reason_id, backlog_reason_desc,backlog_comment } = req.body;
+  const { order_id, backlog_reason_id, backlog_reason_desc, backlog_comment } =
+    req.body;
   console.log("🚀 ~ router.put ~ req.body:", req.body);
 
-  // Validate inputs
   if (!order_id || !backlog_reason_id || !backlog_comment) {
     return res
       .status(400)
@@ -35,19 +34,15 @@ router.put("/update-backlog-reason", async (req, res) => {
   }
 
   try {
-    // Update query
     const sql = `
-            UPDATE shopify_orders 
-            SET backlog_reason_id = ?, backlog_reason_desc = ?
-            WHERE order_id = ?
-        `;
-
+      UPDATE shopify_orders 
+      SET backlog_reason_id = ?, backlog_reason_desc = ?
+      WHERE order_id = ?
+    `;
     const values = [backlog_reason_id, backlog_comment, order_id];
 
-    // Use db.promise().query() to execute the query
     const [result] = await db.promise().query(sql, values);
 
-    // Check if the order was updated
     if (result.affectedRows === 0) {
       return res
         .status(404)
