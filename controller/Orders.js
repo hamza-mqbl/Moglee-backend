@@ -4,6 +4,7 @@ const db = require("../DB/DB");
 
 // Get dispatch backlog
 router.get("/get-dispatch-backlog", async (req, res) => {
+  console.log("🚀 ~ router.get ~ req:", req)
   console.log("Request for dispatch backlog received");
   try {
     const [results] = await db.query("SELECT * FROM dispatchBacklog");

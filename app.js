@@ -7,12 +7,26 @@ const cors = require("cors");
 app.use(express.json());
 app.use(cookieParser());
 
+// Define allowed origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://moglee-project-git-main-hamza-maqbools-projects-6a9ca7c2.vercel.app',
+  'https://moglee-project.vercel.app'
+];
 
-app.use(cors({
-  origin: ["http://localhost:3000","https://moglee-project.vercel.app/"],  // Allow both frontend URLs
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // app.use()
 app.use("/", express.static("uploads")); //setup done for 2nd branch
