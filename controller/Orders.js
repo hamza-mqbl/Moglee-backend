@@ -4,7 +4,7 @@ const db = require("../DB/DB");
 
 // Get dispatch backlog
 router.get("/get-dispatch-backlog", async (req, res) => {
-  console.log("req is comming")
+  console.log("Request for dispatch backlog received");
   try {
     const [results] = await db.query("SELECT * FROM dispatchBacklog");
     res.json(results);
@@ -24,21 +24,25 @@ router.get("/test-db-connection", async (req, res) => {
     res.status(500).json({ error: "Database connection failed" });
   }
 });
+
+// Get backlog reasons
 router.get("/get-backlog_reasons", async (req, res) => {
-  console.log("request is coming", req.body);
-  db.query("SELECT * FROM backlog_reasons", (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
+  console.log("Request for backlog reasons received");
+  try {
+    const [results] = await db.query("SELECT * FROM backlog_reasons");
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Error executing query:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
+// Update backlog reason
 router.put("/update-backlog-reason", async (req, res) => {
-  const { order_id, backlog_reason_id, backlog_reason_desc, backlog_comment } =
-    req.body;
-  console.log("🚀 ~ router.put ~ req.body:", req.body);
+  const { order_id, backlog_reason_id, backlog_reason_desc, backlog_comment } = req.body;
+  console.log("Request to update backlog reason:", req.body);
 
+  // Validate inputs
   if (!order_id || !backlog_reason_id || !backlog_comment) {
     return res
       .status(400)
@@ -53,8 +57,9 @@ router.put("/update-backlog-reason", async (req, res) => {
     `;
     const values = [backlog_reason_id, backlog_comment, order_id];
 
-    const [result] = await db.promise().query(sql, values);
+    const [result] = await db.query(sql, values);
 
+    // Check if the order was updated
     if (result.affectedRows === 0) {
       return res
         .status(404)
