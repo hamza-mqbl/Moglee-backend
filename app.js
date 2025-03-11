@@ -9,7 +9,7 @@ app.use(cookieParser());
 
 
 app.use(cors({
-  origin: ["https://e-shop-frontend-six.vercel.app", "http://localhost:5173","http://localhost:3000","https://moglee-project.vercel.app/"],  // Allow both frontend URLs
+  origin: ["http://localhost:3000","https://moglee-project.vercel.app/"],  // Allow both frontend URLs
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
