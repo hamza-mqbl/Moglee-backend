@@ -68,7 +68,7 @@ router.post("/create-user", upload.single("avatar"), async (req, res, next) => {
 
     // Generate activation token
     const activationToken = createActivationToken(user);
-    const activationUrl = `http://localhost:5000/api/user/activation/${activationToken}`;
+    const activationUrl = `https://moglee-backend.vercel.app/api/user/activation/${activationToken}`;
 
     // Send activation email
     try {
