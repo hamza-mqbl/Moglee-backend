@@ -23,6 +23,7 @@ app.use(
         callback(new Error('Not allowed by CORS'));
       }
     },
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -44,8 +45,10 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 // import routes
 
 const Orders = require("./controller/Orders.js");
+const users = require("./controller/users.js");
 
 app.use("/api/orders", Orders);
+app.use("/api/user", users);
 
 app.get("/is", (req, res) => {
   res.send("Server is running!");
