@@ -4,17 +4,31 @@ const db = require("../DB/DB");
 
 // Get dispatch backlog
 router.get("/get-dispatch-backlog", async (req, res) => {
-  console.log("🚀 ~ router.get ~ req:", req)
+  // console.log("🚀 ~ router.get ~ req:", req)
   console.log("Request for dispatch backlog received");
   try {
-    const [results] = await db.query("SELECT * FROM dispatchBacklog");
+    console.log("query is running")
+    const [results] = await db.query("SELECT * FROM dispatchBacklog WHERE backlog_reason_id IS NULL");
+    // console.log("🚀 ~ router.get ~ results:", results)
     res.json(results);
   } catch (err) {
     console.error("Error executing query:", err);
     res.status(500).json({ error: err.message });
   }
 });
-
+router.get("/get-updated-dispatch-backlog", async (req, res) => {
+  // console.log("🚀 ~ router.get ~ req:", req)
+  console.log("Request for dispatch backlog received---------------------------");
+  try {
+    console.log("query is running")
+    const [results] = await db.query("SELECT * FROM dispatchBacklog");
+    // console.log("🚀 ~ router.get ~ results:", results)
+    res.json(results);
+  } catch (err) {
+    console.error("Error executing query:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 // Test database connection
 router.get("/test-db-connection", async (req, res) => {
   try {

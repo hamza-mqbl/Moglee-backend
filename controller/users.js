@@ -181,7 +181,7 @@ router.get(
   "/getuser",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
-    console.log("hitting")
+    console.log("hitting");
     try {
       const [users] = await db.execute("SELECT * FROM users WHERE id = ?", [
         req.user.id,
@@ -191,7 +191,7 @@ router.get(
       }
 
       const user = users[0];
-      console.log("🚀 ~ catchAsyncErrors ~ user:", user)
+      console.log("🚀 ~ catchAsyncErrors ~ user:", user);
       res.status(200).json({
         success: true,
         user,
@@ -230,6 +230,7 @@ router.put(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { email, password, name } = req.body;
+      console.log("🚀 ~ catchAsyncErrors ~ req.body:", req.body);
 
       const [users] = await db.execute("SELECT * FROM users WHERE email = ?", [
         email,
@@ -239,12 +240,6 @@ router.put(
       }
 
       const user = users[0];
-      //   const isPasswordValid = await bcrypt.compare(password, user.password);
-      //   if (!isPasswordValid) {
-      //     return next(
-      //       new ErrorHandler("Please provide the correct information", 400)
-      //     );
-      //   }
 
       await db.execute("UPDATE users SET name = ?, email = ? WHERE id = ?", [
         name,
@@ -252,9 +247,14 @@ router.put(
         user.id,
       ]);
 
+      // Fetch updated user data
+      const [updatedUser] = await db.execute("SELECT * FROM users WHERE id = ?", [
+        user.id,
+      ]);
+
       res.status(201).json({
         success: true,
-        user,
+        user: updatedUser[0], // Send the updated user
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -262,13 +262,13 @@ router.put(
   })
 );
 
+
 // Update user avatar
 router.put(
   "/update-avatar",
   isAuthenticated,
   upload.single("avatar"),
   catchAsyncErrors(async (req, res, next) => {
-    console.log("🚀 ~ catchAsyncErrors ~ req:", req);
     console.log("File received:", req.file); // Confirm the file is received
 
     try {
@@ -303,17 +303,18 @@ router.put(
             uploadStream.end(req.file.buffer); // End the stream with the file buffer
           });
 
-          // Optionally delete the old avatar from Cloudinary
-          if (user.avatar) {
-            const oldAvatar = JSON.parse(user.avatar);
-            if (oldAvatar.public_id) {
-              await cloudinary.uploader.destroy(oldAvatar.public_id);
-            }
-          }
+          // // Optionally delete the old avatar from Cloudinary
+          // if (user.avatar) {
+          //   const oldAvatar = JSON.parse(user.avatar);
+          //   if (oldAvatar.public_id) {
+          //     await cloudinary.uploader.destroy(oldAvatar.public_id);
+          //   }
+          // }
         } catch (error) {
           return next(new ErrorHandler("Image upload failed", 500));
         }
       }
+      console.log("🚀 ~ catchAsyncErrors ~ avatarResult:", avatarResult)
 
       // Update the user's avatar with the new Cloudinary result in MySQL
       await db.execute("UPDATE users SET avatar = ? WHERE id = ?", [
@@ -343,7 +344,7 @@ router.put(
   "/update-user-password",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
-    console.log(req.body)
+    console.log(req.body);
     try {
       const [users] = await db.execute("SELECT * FROM users WHERE id = ?", [
         req.user.id,
@@ -360,8 +361,6 @@ router.put(
       if (!isPasswordMatched) {
         return next(new ErrorHandler("Old password is incorrect!", 400));
       }
-
-    
 
       const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
       await db.execute("UPDATE users SET password = ? WHERE id = ?", [
