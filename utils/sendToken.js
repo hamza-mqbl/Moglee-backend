@@ -29,9 +29,11 @@ const sendToken = (userId, statuscode, res) => {
   });
 
   // option for cookies
-  const options = {
+   const options = {
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Required for HTTPS
+    sameSite: "None", // Important for cross-origin cookies
   };
   res.status(statuscode).cookie("token", token, options).json({
     success: true,
